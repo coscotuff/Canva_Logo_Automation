@@ -1,0 +1,6 @@
+numpy==1.26.1
+playwright==1.41.2
+rich==13.7.0
+pillow==10.1.0
+opencv-python==4.7.0.72
+cairosvg==2.7.1
