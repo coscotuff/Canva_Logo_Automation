@@ -1,4 +1,4 @@
-STAGE: 2
+STAGE: "2"
 
 # For parallel execution or not (y/n)
 PARALLEL: "y"
