@@ -39,7 +39,7 @@ def get_canny(image):
     return canny
 
 
-def svg_to_canny(content):
+def svg_to_canny(content, save_only=False):
     """
     Converts the input SVG to a Canny Edge Image
 
@@ -54,6 +54,9 @@ def svg_to_canny(content):
 
     # Convert to OpenCV Image
     cv_img = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGBA2BGRA)
+
+    if save_only:
+        return cv_img
 
     # Get the Canny Edge Image
     canny = get_canny(image=cv_img)

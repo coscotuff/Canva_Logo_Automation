@@ -172,7 +172,7 @@ evaluation/SWE-bench/data
 .env.production.local
 logs
 
-# Playwright state
+# Playwright statec
 playwright_state/
 
 # Dataset

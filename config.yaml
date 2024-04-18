@@ -1,0 +1,11 @@
+STAGE: 2
+
+# For parallel execution or not (y/n)
+PARALLEL: "y"
+WORKERS: 10
+
+# Images download directory
+INPUT_DIR: "images"
+
+# Final dataset directory
+OUTPUT_DIR: "dataset"
