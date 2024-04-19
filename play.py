@@ -125,7 +125,6 @@ class CanvaAutomation(object):
 
             iteration += 1
 
-
     async def download_images(self):
         """
         Downloads the SVG files from the Canva page and saves them in the images directory.
@@ -148,28 +147,36 @@ class CanvaAutomation(object):
         await new_page.wait_for_load_state()
         self.page = new_page
 
-        # Click on the share button:
-        await self.page.get_by_text("Share", exact=True).click()
+        try:
+            # Click on the share button:
+            await self.page.get_by_text("Share", exact=True).click(timeout=10000)
 
-        # Click on the download option:
-        time.sleep(0.1)
-        await self.page.get_by_text("Download", exact=True).click()
+            # Click on the download option:
+            time.sleep(0.1)
+            await self.page.get_by_text("Download", exact=True).click(timeout=10000)
 
-        # Click on the drop-down menu:
-        time.sleep(0.4)
-        await self.page.get_by_text("Suggested", exact=True).click()
+            # Click on the drop-down menu:
+            time.sleep(0.4)
+            await self.page.get_by_text("Suggested", exact=True).click(timeout=10000)
 
-        # Select the SVG option:
-        await self.page.get_by_text("SVG", exact=True).click()
+            # Select the SVG option:
+            await self.page.get_by_text("SVG", exact=True).click(timeout=10000)
 
-        # Start waiting for the download
-        async with self.page.expect_download() as download_info:
-            await self.page.get_by_text("Download", exact=True).nth(1).click()
-        download = await download_info.value
-
+            # Start waiting for the download
+            async with self.page.expect_download() as download_info:
+                await self.page.get_by_text("Download", exact=True).nth(1).click(
+                    timeout=10000
+                )
+            download = await download_info.value
+            await download.save_as("images/" + download.suggested_filename)
+            console.log(f"[bold green]Downloaded {self.URL}")
+        except Exception as e:
+            # Log the crashed URL in a file and close the browser
+            console.log(f"[bold red]Error Downloading from {self.URL}: {e}")
+            with open("remainder.txt", "a") as f:
+                f.write(self.URL + "\n")
+                
         # Wait for the download process to complete and save the downloaded file somewhere
-        await download.save_as("images/" + download.suggested_filename)
-
         await self.close_browser()
 
     async def click_on_button(self, xpath: str):
@@ -214,7 +221,7 @@ class CanvaAutomation(object):
         """
         self.playwright = await async_playwright().start()
         firefox = self.playwright.firefox
-        self.browser = await firefox.launch(headless=True, args=["--kiosk"])
+        self.browser = await firefox.launch(headless=False, args=["--kiosk"])
         storage_state = "playwright_state/canva_state.json"
 
         self.context = await self.browser.new_context(
@@ -402,7 +409,7 @@ if __name__ == "__main__":
             for i in links.items():
                 url = download(url=i[0])
                 console.log(f"[bold green] Downloaded .svg from: [bold blue]{url}")
-            pass
+            
         else:
             console.log(
                 f"[bold yellow]You have opted for [bold blue]Parallel Downloading [bold yellow]with [bold blue]{WORKERS} [bold yellow]workers."
